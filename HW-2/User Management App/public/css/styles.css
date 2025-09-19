@@ -1,0 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+h2 {
+    color: black;
+}
+
+input, button {
+    margin: 10px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+button {
+    margin: 10px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #2196F3;
+    color: white;
+    cursor: pointer;
+}
+
+a{
+    margin: 10px;
+}
+
+
+.heading {
+    background-color: #2196F3;
+    color: white;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.actions-container {
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+}
+
+
+.user-table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.user-table th, .user-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.user-table th {
+    background-color: #2196F3;
+    color: white;
+    text-align: center;
+}
+
+.user-table td {
+    text-align: left;
+}

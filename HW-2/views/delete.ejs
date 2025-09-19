@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <title>Delete Highest ID</title>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <h1 class="heading">Delete Highest-ID Book</h1>
+      <p class="subheading">Removes the book with the largest ID number.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card form-card">
+      <form class="form" method="POST" action="/delete-book">
+        <p>This action cannot be undone. Continue?</p>
+        <div class="form-actions">
+          <button class="btn danger" type="submit">Delete</button>
+          <a href="/"><button class="btn" type="button">Cancel</button></a>
+        </div>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
+

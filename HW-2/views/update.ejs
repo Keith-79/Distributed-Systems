@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <title>Update Book</title>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <h1 class="heading">Update a Book</h1>
+      <p class="subheading">Enter the Book ID and the new title/author, then save.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card form-card">
+      <form class="form" method="POST" action="/update-book">
+        <div>
+          <label class="label" for="bookid">Book ID</label>
+          <input
+            id="bookid"
+            name="BookID"
+            class="input"
+            type="text"
+            inputmode="numeric"
+            placeholder="E.g., 1"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="label" for="title">New Title</label>
+          <input
+            id="title"
+            name="Title"
+            class="input"
+            type="text"
+            placeholder="E.g., The Pragmatic Programmer"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="label" for="author">New Author</label>
+          <input
+            id="author"
+            name="Author"
+            class="input"
+            type="text"
+            placeholder="E.g., Andy Hunt &amp; Dave Thomas"
+            required
+          />
+        </div>
+
+        <div class="form-actions">
+          <button class="btn primary" type="submit">Update Book</button>
+          <a href="/"><button class="btn" type="button">Cancel</button></a>
+        </div>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

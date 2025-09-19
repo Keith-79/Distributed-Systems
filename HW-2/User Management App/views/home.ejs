@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo 2</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <h1 class="heading">User Management App</h1>
+
+    <h2>Users List</h2>
+    <table id="userTable" class="user-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach((user)=> { %>
+                <tr>
+                    <td>
+                        <%= user.id %>
+                    </td>
+                    <td>
+                        <%= user.name %>
+                    </td>
+                </tr>
+                <%});%>
+        </tbody>
+    </table>
+
+
+    <!-- Add New User -->
+    <div class="actions-container">
+        <a href="/create">
+            <button>Create User</button>
+        </a>
+
+        <!-- Update User -->
+        <a href="/update">
+            <button>Update User</button>
+        </a>
+
+        <!-- Delete User -->
+        <a href="/delete">
+            <button>Delete User</button>
+        </a>
+    </div>
+</body>
+
+</html>

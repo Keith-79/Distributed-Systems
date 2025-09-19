@@ -1,0 +1,25 @@
+{
+  "name": "hw2",
+  "version": "1.0.0",
+  "description": "Data-236 HW2",
+  "main": "index.js",
+ "scripts": {
+  "start": "node index.js",
+  "lint": "eslint .",
+  "lint:fix": "eslint . --fix",
+  "test": "echo \"No tests yet\" && exit 0"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "eslint": "^9.35.0",
+    "globals": "^16.4.0"
+  }
+}

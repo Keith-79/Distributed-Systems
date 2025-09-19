@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <title>Book Store</title>
+</head>
+<body>
+  
+  <header class="hero">
+    <div class="hero-inner">
+      <h1 class="heading">Book Store</h1>
+      <p class="subheading">Add, update, and manage your library in seconds.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 class="h2">List of All Books</h2>
+
+    <section class="card table-wrap">
+      <table class="books-table">
+        <thead>
+          <tr>
+            <th>Book ID</th>
+            <th>Title</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% books.forEach(function(book){ %>
+            <tr>
+              <td><%= book.BookID %></td>
+              <td><%= book.Title %></td>
+              <td><%= book.Author %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="actions">
+      <a href="/add-book"><button class="btn primary">Add Book</button></a>
+      <a href="/update-book"><button class="btn">Update Book</button></a>
+      <a href="/delete-book"><button class="btn danger">Delete Book</button></a>
+    </div>
+
+    
+  </main>
+</body>
+</html>
