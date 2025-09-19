@@ -37,9 +37,19 @@ app.use(session({
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.alert = req.session.alert || null;
+  res.locals.sessionId = req.sessionID || null; 
   delete req.session.alert; // flash messages clear after one request
   next();
 });
+
+app.use((req, res, next) => {
+  if (!res.locals.alert && req.query.logout === '1') {
+    res.locals.alert = { type: 'info', text: 'You have been logged out.' };
+  }
+  next();
+});
+
+
 
 // routes
 app.use('/', routes);
