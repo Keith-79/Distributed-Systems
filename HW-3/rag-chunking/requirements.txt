@@ -1,0 +1,6 @@
+llama-index
+llama-index-embeddings-huggingface
+sentence-transformers
+faiss-cpu
+numpy
+pandas
