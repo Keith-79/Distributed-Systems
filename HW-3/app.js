@@ -5,7 +5,7 @@ const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
 
-const routes = require('./auth'); // import router
+const routes = require('./routes/auth'); // import router
 
 const app = express();
 const PORT = process.env.PORT || 3000;

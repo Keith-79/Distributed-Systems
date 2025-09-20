@@ -6,7 +6,7 @@ const router = express.Router();
 // Demo user (OK for HW)
 const users = [
   { id: 1, username: 'admin', password: bcrypt.hashSync('password', 8), name: 'Admin User' },
-  { id: 2, username: 'Keith', password: '$2b$10$..fOzh5RHyS5VyPTX7yVA.zZjOmJQ2pdSVQtpF4HNI95i5uAIwWPa', name: 'Keith Gonsalves' }
+  { id: 2, username: 'Keith', password: bcrypt.hashSync('password', 8), name: 'Keith Gonsalves' }
 ];
 
 // Protect routes
