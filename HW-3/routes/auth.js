@@ -44,7 +44,12 @@ router.post('/login', (req, res) => {
 
 // Dashboard (protected)
 router.get('/dashboard', requireLogin, (req, res) => {
-  res.render('dashboard');
+  const courses = [
+    { title: 'FA25: DATA-228 Sec 21 - Big Data Tech and Apps', term: 'Fall 2025', bgClass: 'bg-danger',   url: '#' },
+    { title: 'FA25: DATA-236 Sec 21 & 71 - Distributed Systems', term: 'Fall 2025', bgClass: 'bg-secondary', url: '#' },
+    { title: 'FA25: DATA-245 Sec 23 - Machine Learning',         term: 'Fall 2025', bgClass: 'bg-warning',  url: '#' }
+  ];
+  res.render('dashboard', { courses });
 });
 
 // Logout
