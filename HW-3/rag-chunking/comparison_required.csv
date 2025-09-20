@@ -1,0 +1,4 @@
+technique,n_chunks,avg_chunk_len,top1_cosine,mean@k_cosine,retrieval_latency_ms
+TokenTextSplitter (256/40),1411,934.3,0.3561,0.3297,10.01
+SemanticSplitter (p95),624,1787.5,0.3776,0.3038,8.05
+SentenceWindow (win=2),12453,89.6,0.5126,0.4661,25.47

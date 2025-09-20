@@ -1,0 +1,51 @@
+[dataset] chars=1,115,394
+
+=== TokenTextSplitter (256/40) ===
+[query] Who are the two feuding houses?
+[query_embedding] dim=384 first8=[-0.004116999916732311, 0.006742999888956547, -0.016308000311255455, 0.002638000063598156, -0.05007699877023697, 0.0021349999587982893, -0.026931999251246452, -0.0752210021018982]
+[shapes] query=(384,) docs=(5, 384)
+[latency_ms] 10.01
+
+rank | store_score | cosine_sim | chunk_len | preview
+-----|-------------|------------|-----------|--------
+   1 |      0.3561 |     0.3561 |       949 | goodly chamber, Yet would you say ye were beaten out of door; And rail upon the hostess of the house; And say you would present her at the leet, Because she bro...
+   2 |      0.3527 |     0.3527 |       982 | open, let us enter too.  KING EDWARD IV: So other foes may set upon our backs. Stand we in good array; for they no doubt Will issue out again and bid us battle:...
+   3 |      0.3194 |     0.3194 |       976 | bids defend; the other again Is my kinsman, whom the king hath wrong'd, Whom conscience and my kindred bids to right. Well, somewhat we must do. Come, cousin, I...
+   4 |      0.3120 |     0.3120 |       979 | in these several places of the city You cry against the noble senate, who, Under the gods, keep you in awe, which else Would feed on one another? What's their s...
+   5 |      0.3083 |     0.3083 |      1018 | by their grave beseeming ornaments, To wield old partisans, in hands as old, Canker'd with peace, to part your canker'd hate: If ever you disturb our streets ag...
+
+=== SemanticSplitter (p95) ===
+[query] Who are the two feuding houses?
+[query_embedding] dim=384 first8=[-0.004116999916732311, 0.006742999888956547, -0.016308000311255455, 0.002638000063598156, -0.05007699877023697, 0.0021349999587982893, -0.026931999251246452, -0.0752210021018982]
+[shapes] query=(384,) docs=(5, 384)
+[latency_ms] 8.05
+
+rank | store_score | cosine_sim | chunk_len | preview
+-----|-------------|------------|-----------|--------
+   1 |      0.3776 |     0.3776 |        30 | A plague o' both your houses! 
+   2 |      0.2982 |     0.2982 |      1522 | They say! They'll sit by the fire, and presume to know What's done i' the Capitol; who's like to rise, Who thrives and who declines; side factions and give out ...
+   3 |      0.2851 |     0.2851 |      1246 | Citizen: And you.  CORIOLANUS: Direct me, if it be your will, Where great Aufidius lies: is he in Antium?  Citizen: He is, and feasts the nobles of the state At...
+   4 |      0.2795 |     0.2795 |        64 | Know man from man? dispute his own estate? Lies he not bed-rid? 
+   5 |      0.2787 |     0.2787 |       499 | Come, sister,--cousin, I would say--pray, pardon me. Go, fellow, get thee home, provide some carts And bring away the armour that is there. Gentlemen, will you ...
+
+=== SentenceWindow (win=2) ===
+[query] Who are the two feuding houses?
+[query_embedding] dim=384 first8=[-0.004116999916732311, 0.006742999888956547, -0.016308000311255455, 0.002638000063598156, -0.05007699877023697, 0.0021349999587982893, -0.026931999251246452, -0.0752210021018982]
+[shapes] query=(384,) docs=(5, 384)
+[latency_ms] 25.47
+
+rank | store_score | cosine_sim | chunk_len | preview
+-----|-------------|------------|-----------|--------
+   1 |      0.5126 |     0.5126 |        47 | here comes two of the house of the Montagues.  
+   2 |      0.4763 |     0.4763 |        35 | WARWICK: And I the house of York.  
+   3 |      0.4599 |     0.4599 |        41 | As I remember, this should be the house. 
+   4 |      0.4565 |     0.4565 |        21 | ROMEO: Whose house?  
+   5 |      0.4253 |     0.4253 |       148 | GLOUCESTER: Two of thy name, both Dukes of Somerset, Have sold their lives unto the house of York; And thou shalt be the third if this sword hold.  
+
+=== Report Metrics (for your write-up) ===
+                 technique  n_chunks  avg_chunk_len  top1_cosine  mean@k_cosine  retrieval_latency_ms
+TokenTextSplitter (256/40)      1411          934.3       0.3561         0.3297                 10.01
+    SemanticSplitter (p95)       624         1787.5       0.3776         0.3038                  8.05
+    SentenceWindow (win=2)     12453           89.6       0.5126         0.4661                 25.47
+
+[saved] /Users/keith/Documents/MS DA Study/DATA 236-Distributed Systems/Distributed-Systems/HW-3/rag-chunking/comparison_required.csv
