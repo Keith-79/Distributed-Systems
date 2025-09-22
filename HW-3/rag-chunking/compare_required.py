@@ -21,7 +21,6 @@ DATA_PATH = Path("data/input.txt")
 QUERY = "Who are the two feuding houses?"
 TOPK = 5
 
-# ---------- helpers ----------
 def load_text(p: Path) -> str:
     return p.read_text(encoding="utf-8", errors="ignore")
 
@@ -42,19 +41,17 @@ def chunk_lengths(nodes) -> Tuple[int, float]:
 
 def build_index(nodes, emb_model) -> VectorStoreIndex:
     dim = len(emb_model.get_text_embedding("probe"))
-    fa = faiss.IndexFlatIP(dim)  # in-memory IP index
+    fa = faiss.IndexFlatIP(dim)
     vs = FaissVectorStore(faiss_index=fa)
     sc = StorageContext.from_defaults(vector_store=vs)
     return VectorStoreIndex(nodes, storage_context=sc, embed_model=emb_model)
 
 def run_retrieval(name: str, nodes, emb_model, query: str, topk: int = 5) -> Dict:
-    # Query embedding (+ required prints)
     qvec = np.array(emb_model.get_text_embedding(query), dtype=np.float32)
     print(f"\n=== {name} ===")
     print(f"[query] {query}")
     print(f"[query_embedding] dim={qvec.shape[0]} first8={np.round(qvec[:8], 6).tolist()}")
 
-    # Build index + time only the retrieval (as required)
     index = build_index(nodes, emb_model)
     retriever = index.as_retriever(similarity_top_k=topk)
 
@@ -62,16 +59,13 @@ def run_retrieval(name: str, nodes, emb_model, query: str, topk: int = 5) -> Dic
     hits = retriever.retrieve(query)
     t_ms = (time.time() - t0) * 1000.0
 
-    # Compute cosine similarities explicitly for the returned chunks
     docs = [h.node.text for h in hits]
     dvecs = embed_texts(emb_model, docs) if docs else np.zeros((0, qvec.shape[0]), dtype=np.float32)
     cosines = [cosine(qvec, dv) for dv in dvecs]
 
-    # Print required shapes
     print(f"[shapes] query={qvec.shape} docs={dvecs.shape}")
     print(f"[latency_ms] {t_ms:.2f}")
 
-    # Build the table rows to print
     rows = []
     for i, h in enumerate(hits, start=1):
         store_score = getattr(h, "score", None)
@@ -81,13 +75,11 @@ def run_retrieval(name: str, nodes, emb_model, query: str, topk: int = 5) -> Dic
         clen = len(h.node.text)
         rows.append([i, score_str, f"{cos_sim:.4f}", clen, preview])
 
-    # Pretty print table
     print("\nrank | store_score | cosine_sim | chunk_len | preview")
     print("-----|-------------|------------|-----------|--------")
     for r in rows:
         print(f"{r[0]:>4} | {r[1]:>11} | {r[2]:>10} | {r[3]:>9} | {r[4]}")
 
-    # Aggregates for the report section
     top1_cos = cosines[0] if cosines else float("nan")
     mean_at_k = float(np.mean(cosines)) if cosines else float("nan")
     n_chunks, avg_len = chunk_lengths(nodes)
@@ -101,57 +93,66 @@ def run_retrieval(name: str, nodes, emb_model, query: str, topk: int = 5) -> Dic
         "retrieval_latency_ms": round(t_ms, 2),
     }
 
-# ---------- main ----------
 def main():
     text = load_text(DATA_PATH)
     print(f"[dataset] chars={len(text):,}")
 
     emb = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-    # Token-based (choose sensible values)
-    enc = tiktoken.get_encoding("cl100k_base")
-    token_splitter = TokenTextSplitter(chunk_size=256, chunk_overlap=40, tokenizer=enc.encode)
-    token_nodes = token_splitter.get_nodes_from_documents([Document(text=text)])
+    QUERIES = [
+        "Who are the two feuding houses?",
+        "Who is Romeo in love with?"
+    ]
 
-    # Semantic chunking (use embed model; expose buffer via defaults if available)
-    sem_splitter = SemanticSplitterNodeParser.from_defaults(
-        embed_model=emb,
-        breakpoint_percentile_threshold=95,   # coherent boundaries
-        # buffer_size=1,  # uncomment if your LlamaIndex build exposes buffer_size
-    )
-    sem_nodes = sem_splitter.get_nodes_from_documents([Document(text=text)])
+    all_rows = []
 
-    # Sentence-window (single sentence + neighbors in metadata)
-    try:
-        import nltk
+    for query in QUERIES:
+        print("\n" + "="*80)
+        print(f"QUERY: {query}")
+        print("="*80)
+
+        enc = tiktoken.get_encoding("cl100k_base")
+        token_splitter = TokenTextSplitter(chunk_size=256, chunk_overlap=40, tokenizer=enc.encode)
+        token_nodes = token_splitter.get_nodes_from_documents([Document(text=text)])
+        r1 = run_retrieval("TokenTextSplitter", token_nodes, emb, query, TOPK)
+
+        sem_splitter = SemanticSplitterNodeParser.from_defaults(
+            embed_model=emb,
+            breakpoint_percentile_threshold=95,
+        )
+        sem_nodes = sem_splitter.get_nodes_from_documents([Document(text=text)])
+        r2 = run_retrieval("SemanticSplitter", sem_nodes, emb, query, TOPK)
+
         try:
-            nltk.data.find("tokenizers/punkt")
-        except LookupError:
-            nltk.download("punkt", quiet=True)
-    except Exception:
-        pass
-    sent_splitter = SentenceWindowNodeParser.from_defaults(
-        window_size=2,
-        window_metadata_key="window",
-    )
-    sent_nodes = sent_splitter.get_nodes_from_documents([Document(text=text)])
+            import nltk
+            try:
+                nltk.data.find("tokenizers/punkt")
+            except LookupError:
+                nltk.download("punkt", quiet=True)
+        except Exception:
+            pass
+        sent_splitter = SentenceWindowNodeParser.from_defaults(
+            window_size=2,
+            window_metadata_key="window",
+        )
+        sent_nodes = sent_splitter.get_nodes_from_documents([Document(text=text)])
+        r3 = run_retrieval("SentenceWindow", sent_nodes, emb, query, TOPK)
 
-    # Run required query for all three, collect summary rows
-    summary = []
-    summary.append(run_retrieval("TokenTextSplitter (256/40)", token_nodes, emb, QUERY, TOPK))
-    summary.append(run_retrieval("SemanticSplitter (p95)", sem_nodes, emb, QUERY, TOPK))
-    summary.append(run_retrieval("SentenceWindow (win=2)", sent_nodes, emb, QUERY, TOPK))
+        df_q = pd.DataFrame([r1, r2, r3], columns=[
+            "technique","n_chunks","avg_chunk_len","top1_cosine","mean@k_cosine","retrieval_latency_ms"
+        ])
+        df_q.insert(0, "query", query)
 
-    df = pd.DataFrame(summary, columns=[
-        "technique","n_chunks","avg_chunk_len","top1_cosine","mean@k_cosine","retrieval_latency_ms"
-    ])
-    print("\n=== Report Metrics (for your write-up) ===")
-    print(df.to_string(index=False))
+        print("\n=== Report Metrics ===")
+        print(df_q.to_string(index=False))
 
-    # Save CSV for the report
-    out = Path("comparison_required.csv")
-    df.to_csv(out, index=False)
-    print(f"\n[saved] {out.resolve()}")
+        all_rows.append(df_q)
+
+    if all_rows:
+        df_all = pd.concat(all_rows, ignore_index=True)
+        out = Path("comparison_required.csv")
+        df_all.to_csv(out, index=False)
+        print(f"\n[saved] {out.resolve()}")
 
 if __name__ == "__main__":
     main()

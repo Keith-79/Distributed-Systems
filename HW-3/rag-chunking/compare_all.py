@@ -18,7 +18,11 @@ import faiss
 import tiktoken
 
 DATA_PATH = Path("data/input.txt")
-QUERY = "Who are the two feuding houses?"
+QUERIES = [
+    "Who are the two feuding houses?",
+    "Who is Romeo in love with?"
+    # you can add more, e.g. "Which play contains the line 'To be, or not to be'?"
+]
 TOPK = 5
 
 # ---------- helpers ----------
@@ -108,50 +112,57 @@ def main():
 
     emb = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-    # Token-based (choose sensible values)
-    enc = tiktoken.get_encoding("cl100k_base")
-    token_splitter = TokenTextSplitter(chunk_size=256, chunk_overlap=40, tokenizer=enc.encode)
-    token_nodes = token_splitter.get_nodes_from_documents([Document(text=text)])
+    QUERIES = [
+        "Who are the two feuding houses?",
+        "Who is Romeo in love with?"
+    ]
 
-    # Semantic chunking (use embed model; expose buffer via defaults if available)
-    sem_splitter = SemanticSplitterNodeParser.from_defaults(
-        embed_model=emb,
-        breakpoint_percentile_threshold=95,   # coherent boundaries
-        # buffer_size=1,  # uncomment if your LlamaIndex build exposes buffer_size
-    )
-    sem_nodes = sem_splitter.get_nodes_from_documents([Document(text=text)])
+    for query in QUERIES:
+        print("\n" + "="*80)
+        print(f"QUERY: {query}")
+        print("="*80)
 
-    # Sentence-window (single sentence + neighbors in metadata)
-    try:
-        import nltk
+        # Token-based
+        enc = tiktoken.get_encoding("cl100k_base")
+        token_splitter = TokenTextSplitter(chunk_size=256, chunk_overlap=40, tokenizer=enc.encode)
+        token_nodes = token_splitter.get_nodes_from_documents([Document(text=text)])
+        r1 = run_retrieval("TokenTextSplitter", token_nodes, emb, query, TOPK)
+
+        # Semantic
+        sem_splitter = SemanticSplitterNodeParser.from_defaults(
+            embed_model=emb,
+            breakpoint_percentile_threshold=95,
+        )
+        sem_nodes = sem_splitter.get_nodes_from_documents([Document(text=text)])
+        r2 = run_retrieval("SemanticSplitter", sem_nodes, emb, query, TOPK)
+
+        # Sentence-window
         try:
-            nltk.data.find("tokenizers/punkt")
-        except LookupError:
-            nltk.download("punkt", quiet=True)
-    except Exception:
-        pass
-    sent_splitter = SentenceWindowNodeParser.from_defaults(
-        window_size=2,
-        window_metadata_key="window",
-    )
-    sent_nodes = sent_splitter.get_nodes_from_documents([Document(text=text)])
+            import nltk
+            try:
+                nltk.data.find("tokenizers/punkt")
+            except LookupError:
+                nltk.download("punkt", quiet=True)
+        except Exception:
+            pass
+        sent_splitter = SentenceWindowNodeParser.from_defaults(
+            window_size=2,
+            window_metadata_key="window",
+        )
+        sent_nodes = sent_splitter.get_nodes_from_documents([Document(text=text)])
+        r3 = run_retrieval("SentenceWindow", sent_nodes, emb, query, TOPK)
 
-    # Run required query for all three, collect summary rows
-    summary = []
-    summary.append(run_retrieval("TokenTextSplitter (256/40)", token_nodes, emb, QUERY, TOPK))
-    summary.append(run_retrieval("SemanticSplitter (p95)", sem_nodes, emb, QUERY, TOPK))
-    summary.append(run_retrieval("SentenceWindow (win=2)", sent_nodes, emb, QUERY, TOPK))
+        df = pd.DataFrame([r1, r2, r3], columns=[
+            "technique","n_chunks","avg_chunk_len","top1_cosine","mean@k_cosine","retrieval_latency_ms"
+        ])
+        print("\n=== Report Metrics ===")
+        print(df.to_string(index=False))
 
-    df = pd.DataFrame(summary, columns=[
-        "technique","n_chunks","avg_chunk_len","top1_cosine","mean@k_cosine","retrieval_latency_ms"
-    ])
-    print("\n=== Report Metrics (for your write-up) ===")
-    print(df.to_string(index=False))
+        safe_q = query.lower().replace(" ", "_").replace("?", "")
+        out = Path(f"comparison_required_{safe_q}.csv")
+        df.to_csv(out, index=False)
+        print(f"\n[saved] {out.resolve()}")
 
-    # Save CSV for the report
-    out = Path("comparison_required.csv")
-    df.to_csv(out, index=False)
-    print(f"\n[saved] {out.resolve()}")
 
 if __name__ == "__main__":
     main()
