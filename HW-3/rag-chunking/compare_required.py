@@ -41,7 +41,7 @@ def chunk_lengths(nodes) -> Tuple[int, float]:
 
 def build_index(nodes, emb_model) -> VectorStoreIndex:
     dim = len(emb_model.get_text_embedding("probe"))
-    fa = faiss.IndexFlatIP(dim)
+    fa = faiss.IndexFlatIP(dim) 
     vs = FaissVectorStore(faiss_index=fa)
     sc = StorageContext.from_defaults(vector_store=vs)
     return VectorStoreIndex(nodes, storage_context=sc, embed_model=emb_model)
@@ -148,11 +148,6 @@ def main():
 
         all_rows.append(df_q)
 
-    if all_rows:
-        df_all = pd.concat(all_rows, ignore_index=True)
-        out = Path("comparison_required.csv")
-        df_all.to_csv(out, index=False)
-        print(f"\n[saved] {out.resolve()}")
-
 if __name__ == "__main__":
     main()
+

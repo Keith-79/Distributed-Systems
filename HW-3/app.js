@@ -1,11 +1,10 @@
-// app.js
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
 
-const routes = require('./routes/auth'); // import router
+const routes = require('./routes/auth'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +14,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // middleware
-app.use(express.urlencoded({ extended: true })); // replaces body-parser
+app.use(express.urlencoded({ extended: true })); 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(morgan('dev'));
 
@@ -38,7 +37,7 @@ app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.alert = req.session.alert || null;
   res.locals.sessionId = req.sessionID || null; 
-  delete req.session.alert; // flash messages clear after one request
+  delete req.session.alert; 
   next();
 });
 
@@ -48,8 +47,6 @@ app.use((req, res, next) => {
   }
   next();
 });
-
-
 
 // routes
 app.use('/', routes);

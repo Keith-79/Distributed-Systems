@@ -41,6 +41,41 @@
   --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* === Clean, centered top heading (no box) === */
+.app-header {
+  background: transparent;                 /* remove dark block */
+  padding: 16px 0;                         /* slim spacing */
+  text-align: center;                      /* center title */
+  border-bottom: 1px solid var(--border-light); /* subtle divider */
+  box-shadow: none;                        /* no shadow */
+  margin-bottom: var(--spacing-xl);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .hero-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+  }
+  .hero-badge {
+    align-self: flex-start;
+  }
+}
+
+
 /* ====== Reset & Base Styles ====== */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -491,4 +526,39 @@ h2, .h4 {
   body {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   }
+}
+
+/* Center the main content column and keep it narrow enough */
+.main-narrow {
+  max-width: 1000px;       /* adjust if you want wider/narrower */
+  margin: 0 auto;
+}
+
+/* Row with page section title & New Book button */
+.home-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Softer list container */
+.list-group {
+  max-width: 1000px;
+  margin: 0 auto;
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03); /* very subtle */
+  box-shadow: var(--shadow-sm);
+}
+
+.list-group-item {
+  background: transparent;           /* no dark blocks per item */
+  border-bottom: 1px solid var(--border-light);
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
 }

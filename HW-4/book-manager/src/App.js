@@ -6,14 +6,13 @@ import UpdateBook from "./pages/UpdateBook";
 import DeleteBook from "./pages/DeleteBook";
 
 function App() {
-  // books state (seed + persist)
   const [books, setBooks] = useState(() => {
     const saved = localStorage.getItem("books");
     return saved
       ? JSON.parse(saved)
       : [
-          { id: 1, title: "Clean Code", author: "Robert C. Martin" },
-          { id: 2, title: "The Pragmatic Programmer", author: "Andrew Hunt" },
+          { id: 1, title: "The Lord of the Rings Trilogy", author: "J.R.R. Tolkien" },
+          { id: 2, title: "Don Quixote", author: "Miguel de Cervantes" },
         ];
   });
   const [selectedId, setSelectedId] = useState(null);
@@ -27,7 +26,6 @@ function App() {
     [books, selectedId]
   );
 
-  // add (auto-increment id)
   const addBook = ({ title, author }) => {
     setBooks((prev) => {
       const nextId = prev.length ? Math.max(...prev.map((b) => b.id)) + 1 : 1;
@@ -35,7 +33,6 @@ function App() {
     });
   };
 
-  // update currently selected book
   const updateBook = ({ title, author }) => {
     if (selectedId == null) return;
     setBooks((prev) =>
@@ -45,7 +42,6 @@ function App() {
     );
   };
 
-  // delete currently selected book
   const deleteBook = () => {
     if (selectedId == null) return;
     setBooks((prev) => prev.filter((b) => b.id !== selectedId));
@@ -53,34 +49,29 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
-      <div className="container py-3">
-        <nav className="mb-3 d-flex gap-3">
-          <Link to="/">Home</Link>
-          <Link to="/create">Create</Link>
-          <Link to="/update">Update</Link>
-          <Link to="/delete">Delete</Link>
-        </nav>
-
-        <Routes>
-          <Route path="/" element={<Home books={books} setSelectedId={setSelectedId} />} />
-          <Route path="/create" element={<CreateWithProps onAdd={addBook} />} />
-          <Route path="/update" element={<UpdateWithProps book={selectedBook} onUpdate={updateBook} />} />
-          <Route path="/delete" element={<DeleteWithProps book={selectedBook} onDelete={deleteBook} />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
-  );
+  <BrowserRouter>
+  <div className="container py-3">
+    <header className="app-header">
+      <h1>Book Management App</h1>
+    </header>
+    <Routes>
+      <Route path="/" element={<Home books={books} setSelectedId={setSelectedId} />} />
+      <Route path="/create" element={<CreateWithProps onAdd={addBook} />} />
+      <Route path="/update" element={<UpdateWithProps book={selectedBook} onUpdate={updateBook} />} />
+      <Route path="/delete" element={<DeleteWithProps book={selectedBook} onDelete={deleteBook} />} />
+    </Routes>
+  </div>
+  </BrowserRouter>
+);
 }
 
-// wrappers to handle redirects after actions
 function CreateWithProps({ onAdd }) {
   const navigate = useNavigate();
   return (
     <CreateBook
       onAdd={(payload) => {
         onAdd(payload);
-        navigate("/"); // redirect home
+        navigate("/"); 
       }}
     />
   );
@@ -93,7 +84,7 @@ function UpdateWithProps({ book, onUpdate }) {
       book={book}
       onUpdate={(payload) => {
         onUpdate(payload);
-        navigate("/"); // redirect home
+        navigate("/"); 
       }}
     />
   );
@@ -106,10 +97,12 @@ function DeleteWithProps({ book, onDelete }) {
       book={book}
       onDelete={() => {
         onDelete();
-        navigate("/"); // redirect home
+        navigate("/"); 
       }}
     />
   );
 }
 
 export default App;
+
+

@@ -8,7 +8,9 @@ export default function CreateBook({ onAdd }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim() || !author.trim()) return;
-    onAdd({ title, author }); // prop usage (rubric)
+
+    if (!window.confirm("Add this book?")) return; // confirm popup
+    onAdd({ title, author }); // wrapper handles redirect
   };
 
   return (

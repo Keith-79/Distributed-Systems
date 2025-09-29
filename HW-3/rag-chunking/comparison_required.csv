@@ -1,4 +1,7 @@
-technique,n_chunks,avg_chunk_len,top1_cosine,mean@k_cosine,retrieval_latency_ms
-TokenTextSplitter (256/40),1411,934.3,0.3561,0.3297,10.01
-SemanticSplitter (p95),624,1787.5,0.3776,0.3038,8.05
-SentenceWindow (win=2),12453,89.6,0.5126,0.4661,25.47
+query,technique,n_chunks,avg_chunk_len,top1_cosine,mean@k_cosine,retrieval_latency_ms
+Who are the two feuding houses?,TokenTextSplitter,1411,934.3,0.3561,0.3297,12.48
+Who are the two feuding houses?,SemanticSplitter,624,1787.5,0.3776,0.3038,10.65
+Who are the two feuding houses?,SentenceWindow,12453,89.6,0.5126,0.4661,27.57
+Who is Romeo in love with?,TokenTextSplitter,1411,934.3,0.6193,0.5945,10.5
+Who is Romeo in love with?,SemanticSplitter,624,1787.5,0.6302,0.6025,10.41
+Who is Romeo in love with?,SentenceWindow,12453,89.6,0.8024,0.7892,30.15

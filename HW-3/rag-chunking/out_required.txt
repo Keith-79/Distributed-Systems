@@ -1,10 +1,14 @@
 [dataset] chars=1,115,394
 
-=== TokenTextSplitter (256/40) ===
+================================================================================
+QUERY: Who are the two feuding houses?
+================================================================================
+
+=== TokenTextSplitter ===
 [query] Who are the two feuding houses?
 [query_embedding] dim=384 first8=[-0.004116999916732311, 0.006742999888956547, -0.016308000311255455, 0.002638000063598156, -0.05007699877023697, 0.0021349999587982893, -0.026931999251246452, -0.0752210021018982]
 [shapes] query=(384,) docs=(5, 384)
-[latency_ms] 10.01
+[latency_ms] 12.48
 
 rank | store_score | cosine_sim | chunk_len | preview
 -----|-------------|------------|-----------|--------
@@ -14,11 +18,11 @@ rank | store_score | cosine_sim | chunk_len | preview
    4 |      0.3120 |     0.3120 |       979 | in these several places of the city You cry against the noble senate, who, Under the gods, keep you in awe, which else Would feed on one another? What's their s...
    5 |      0.3083 |     0.3083 |      1018 | by their grave beseeming ornaments, To wield old partisans, in hands as old, Canker'd with peace, to part your canker'd hate: If ever you disturb our streets ag...
 
-=== SemanticSplitter (p95) ===
+=== SemanticSplitter ===
 [query] Who are the two feuding houses?
 [query_embedding] dim=384 first8=[-0.004116999916732311, 0.006742999888956547, -0.016308000311255455, 0.002638000063598156, -0.05007699877023697, 0.0021349999587982893, -0.026931999251246452, -0.0752210021018982]
 [shapes] query=(384,) docs=(5, 384)
-[latency_ms] 8.05
+[latency_ms] 10.65
 
 rank | store_score | cosine_sim | chunk_len | preview
 -----|-------------|------------|-----------|--------
@@ -28,11 +32,11 @@ rank | store_score | cosine_sim | chunk_len | preview
    4 |      0.2795 |     0.2795 |        64 | Know man from man? dispute his own estate? Lies he not bed-rid? 
    5 |      0.2787 |     0.2787 |       499 | Come, sister,--cousin, I would say--pray, pardon me. Go, fellow, get thee home, provide some carts And bring away the armour that is there. Gentlemen, will you ...
 
-=== SentenceWindow (win=2) ===
+=== SentenceWindow ===
 [query] Who are the two feuding houses?
 [query_embedding] dim=384 first8=[-0.004116999916732311, 0.006742999888956547, -0.016308000311255455, 0.002638000063598156, -0.05007699877023697, 0.0021349999587982893, -0.026931999251246452, -0.0752210021018982]
 [shapes] query=(384,) docs=(5, 384)
-[latency_ms] 25.47
+[latency_ms] 27.57
 
 rank | store_score | cosine_sim | chunk_len | preview
 -----|-------------|------------|-----------|--------
@@ -42,10 +46,62 @@ rank | store_score | cosine_sim | chunk_len | preview
    4 |      0.4565 |     0.4565 |        21 | ROMEO: Whose house?  
    5 |      0.4253 |     0.4253 |       148 | GLOUCESTER: Two of thy name, both Dukes of Somerset, Have sold their lives unto the house of York; And thou shalt be the third if this sword hold.  
 
-=== Report Metrics (for your write-up) ===
-                 technique  n_chunks  avg_chunk_len  top1_cosine  mean@k_cosine  retrieval_latency_ms
-TokenTextSplitter (256/40)      1411          934.3       0.3561         0.3297                 10.01
-    SemanticSplitter (p95)       624         1787.5       0.3776         0.3038                  8.05
-    SentenceWindow (win=2)     12453           89.6       0.5126         0.4661                 25.47
+=== Report Metrics ===
+                          query         technique  n_chunks  avg_chunk_len  top1_cosine  mean@k_cosine  retrieval_latency_ms
+Who are the two feuding houses? TokenTextSplitter      1411          934.3       0.3561         0.3297                 12.48
+Who are the two feuding houses?  SemanticSplitter       624         1787.5       0.3776         0.3038                 10.65
+Who are the two feuding houses?    SentenceWindow     12453           89.6       0.5126         0.4661                 27.57
+
+================================================================================
+QUERY: Who is Romeo in love with?
+================================================================================
+
+=== TokenTextSplitter ===
+[query] Who is Romeo in love with?
+[query_embedding] dim=384 first8=[-0.08665800094604492, 0.009959000162780285, 0.06071100011467934, 0.020253000780940056, -0.011710000224411488, 0.04363200068473816, 0.12273900210857391, 0.0559069998562336]
+[shapes] query=(384,) docs=(5, 384)
+[latency_ms] 10.50
+
+rank | store_score | cosine_sim | chunk_len | preview
+-----|-------------|------------|-----------|--------
+   1 |      0.6193 |     0.6193 |       944 | to me, That I must love a loathed enemy.  Nurse: What's this? what's this?  JULIET: A rhyme I learn'd even now Of one I danced withal.  Nurse: Anon, anon! Come,...
+   2 |      0.5999 |     0.5999 |       927 | why, no. But sadly tell me who.  ROMEO: Bid a sick man in sadness make his will: Ah, word ill urged to one that is so ill! In sadness, cousin, I do love a woman...
+   3 |      0.5932 |     0.5932 |       859 | with extreme sweet.  ROMEO: Can I go forward when my heart is here? Turn back, dull earth, and find thy centre out.  BENVOLIO: Romeo! my cousin Romeo!  MERCUTIO...
+   4 |      0.5841 |     0.5841 |       909 | thy good heart's oppression.  ROMEO: Why, such is love's transgression. Griefs of mine own lie heavy in my breast, Which thou wilt propagate, to have it prest W...
+   5 |      0.5761 |     0.5761 |       863 | lay one in, another out to have.  ROMEO: I pray thee, chide not; she whom I love now Doth grace for grace and love for love allow; The other did not so.  FRIAR ...
+
+=== SemanticSplitter ===
+[query] Who is Romeo in love with?
+[query_embedding] dim=384 first8=[-0.08665800094604492, 0.009959000162780285, 0.06071100011467934, 0.020253000780940056, -0.011710000224411488, 0.04363200068473816, 0.12273900210857391, 0.0559069998562336]
+[shapes] query=(384,) docs=(5, 384)
+[latency_ms] 10.41
+
+rank | store_score | cosine_sim | chunk_len | preview
+-----|-------------|------------|-----------|--------
+   1 |      0.6302 |     0.6302 |      1104 | what's this?  JULIET: A rhyme I learn'd even now Of one I danced withal.  Nurse: Anon, anon! Come, let's away; the strangers all are gone.  Chorus: Now old desi...
+   2 |      0.6214 |     0.6214 |      1665 | But sadly tell me who.  ROMEO: Bid a sick man in sadness make his will: Ah, word ill urged to one that is so ill! In sadness, cousin, I do love a woman.  BENVOL...
+   3 |      0.6115 |     0.6115 |       605 | how sweet is love itself possess'd, When but love's shadows are so rich in joy! News from Verona!--How now, Balthasar! Dost thou not bring me letters from the f...
+   4 |      0.5859 |     0.5859 |       847 | We would as willingly give cure as know.  BENVOLIO: See, where he comes: so please you, step aside; I'll know his grievance, or be much denied.  MONTAGUE: I wou...
+   5 |      0.5633 |     0.5633 |       223 | Well, death's the end of all.  ROMEO: Spakest thou of Juliet? how is it with her? Doth she not think me an old murderer, Now I have stain'd the childhood of our...
+
+=== SentenceWindow ===
+[query] Who is Romeo in love with?
+[query_embedding] dim=384 first8=[-0.08665800094604492, 0.009959000162780285, 0.06071100011467934, 0.020253000780940056, -0.011710000224411488, 0.04363200068473816, 0.12273900210857391, 0.0559069998562336]
+[shapes] query=(384,) docs=(5, 384)
+[latency_ms] 30.15
+
+rank | store_score | cosine_sim | chunk_len | preview
+-----|-------------|------------|-----------|--------
+   1 |      0.8024 |     0.8024 |        17 | ROMEO: Whither?  
+   2 |      0.7949 |     0.7949 |        47 | ROMEO: Out of her favour, where I am in love.  
+   3 |      0.7853 |     0.7853 |        42 | ROMEO: Why, such is love's transgression. 
+   4 |      0.7833 |     0.7833 |        21 | Where's Romeo's man? 
+   5 |      0.7802 |     0.7802 |        22 | ROMEO: Is it even so? 
+
+=== Report Metrics ===
+                     query         technique  n_chunks  avg_chunk_len  top1_cosine  mean@k_cosine  retrieval_latency_ms
+Who is Romeo in love with? TokenTextSplitter      1411          934.3       0.6193         0.5945                 10.50
+Who is Romeo in love with?  SemanticSplitter       624         1787.5       0.6302         0.6025                 10.41
+Who is Romeo in love with?    SentenceWindow     12453           89.6       0.8024         0.7892                 30.15
 
 [saved] /Users/keith/Documents/MS DA Study/DATA 236-Distributed Systems/Distributed-Systems/HW-3/rag-chunking/comparison_required.csv

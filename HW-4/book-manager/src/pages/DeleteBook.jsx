@@ -14,11 +14,19 @@ export default function DeleteBook({ book, onDelete }) {
       <h2 className="h4">Delete Book</h2>
       <div className="card my-3">
         <div className="card-body">
-          <strong>#{book.id} • {book.title}</strong>
+          <strong>Book ID: {book.id} • {book.title}</strong> {/* ← updated */}
           <div className="text-muted">by {book.author}</div>
         </div>
       </div>
-      <button className="btn btn-danger" onClick={onDelete}>Delete Book</button>
+      <button
+        className="btn btn-danger"
+        onClick={() => {
+          if (!window.confirm(`Delete “${book.title}” by ${book.author}?`)) return;
+          onDelete();
+        }}
+      >
+        Delete Book
+      </button>
     </div>
   );
 }
