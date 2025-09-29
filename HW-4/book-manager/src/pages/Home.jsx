@@ -9,7 +9,7 @@ export default function Home({ books, setSelectedId }) {
   return (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1 className="h3 m-0">Book Manager</h1>
+        <h1 className="h3 m-0">Book Management App</h1>
         <Link to="/create" className="btn btn-primary">+ New Book</Link>
       </div>
 
