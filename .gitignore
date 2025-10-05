@@ -24,3 +24,11 @@ __pycache__/
 # Editors
 .vscode/
 .idea/
+
+# Monorepo ignores
+**/.venv/
+**/__pycache__/
+**/*.pyc
+**/.env
+.DS_Store
+.vscode/
