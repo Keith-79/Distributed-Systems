@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>HW-6 Chat Client</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
+    .card { max-width: 760px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 6px rgba(0,0,0,.06); }
+    label { font-weight: 600; display: block; margin: 12px 0 6px; }
+    input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; }
+    button { margin-top: 14px; padding: 10px 14px; border: 0; border-radius: 10px; background: #111827; color: #fff; cursor: pointer; }
+    pre { background: #0b1020; color: #e5e7eb; padding: 12px; border-radius: 10px; overflow: auto; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    small { color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Chat → <code>/api/chat</code></h2>
+    <div class="row">
+      <div>
+        <label>API Base URL</label>
+        <input id="baseUrl" value="http://127.0.0.1:8000" />
+        <small>Change if running elsewhere.</small>
+      </div>
+      <div>
+        <label>Session ID</label>
+        <input id="sessionId" value="s1" />
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>User ID</label>
+        <input id="userId" value="u1" />
+      </div>
+      <div>
+        <label>Message</label>
+        <input id="message" value="Testing from index.html" />
+      </div>
+    </div>
+    <button id="send">Send</button>
+
+    <h3>Response</h3>
+    <pre id="out">(waiting)</pre>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    $("send").addEventListener("click", async () => {
+      const baseUrl = $("baseUrl").value.replace(/\/+$/, "");
+      const body = {
+        user_id: $("userId").value,
+        session_id: $("sessionId").value,
+        message: $("message").value
+      };
+      try {
+        const res = await fetch(baseUrl + "/api/chat", {
+          method: "POST",
+          headers: {"Content-Type": "application/json", "Accept": "application/json"},
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        $("out").textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        $("out").textContent = "Request failed: " + e.message;
+      }
+    });
+  </script>
+</body>
+</html>
