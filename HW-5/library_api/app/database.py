@@ -1,24 +1,32 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 
-# ✅ Load .env file
 load_dotenv()
 
+# If DATABASE_URL is set, use it; otherwise default to SQLite file
 DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    # If you later want MySQL, set DATABASE_URL in .env:
+    # mysql+pymysql://USER:PASSWORD@HOST:PORT/DBNAME
+    DATABASE_URL = "sqlite:///./library.db"
 
-# ✅ Create engine
-engine = create_engine(DATABASE_URL, echo=True)
+# sqlite needs check_same_thread False; other drivers ignore this kwarg
+connect_args = {}
+if DATABASE_URL.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
 
-# ✅ Session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args=connect_args,
+    pool_pre_ping=True,
+    future=True,
+)
 
-# ✅ Base for models to inherit
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, future=True)
 Base = declarative_base()
 
-# ✅ Dependency to use in routers
 def get_db():
     db = SessionLocal()
     try:

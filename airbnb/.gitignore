@@ -1,0 +1,18 @@
+﻿node_modules/
+.env
+.env.*
+!*.example
+coverage/
+dist/
+.DS_Store
+Thumbs.db
+.vscode/
+cookies.txt
+
+# deps & env
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+*.env
+backend/.env
+frontend/.env

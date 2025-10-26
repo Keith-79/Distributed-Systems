@@ -1,11 +1,12 @@
+# library_api/app/routers/books.py
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
+from fastapi.responses import JSONResponse
 from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
-from fastapi.responses import JSONResponse
-from app.deps import get_db
-from app import models
-from app import schemas
+from sqlalchemy.orm import Session
+
+from ..deps import get_db
+from .. import models, schemas
 
 router = APIRouter()
 
@@ -74,15 +75,15 @@ def update_book(book_id: int, payload: schemas.BookUpdate, db: Session = Depends
     db.refresh(book)
     return book
 
-@router.delete("/{book_id}", responses={200: {"description": "Book deleted"}})
+@router.delete("/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_book(book_id: int, db: Session = Depends(get_db)):
     book = db.get(models.Book, book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
     db.delete(book)
     db.commit()
-    return JSONResponse(status_code=200, content={"detail": "Book deleted"})
-
+    # 204: no content body
+    return
 
 # Extra: Get all books by a specific author
 @router.get("/by-author/{author_id}", response_model=schemas.BooksPage)
@@ -95,6 +96,8 @@ def books_by_author(
     if not db.get(models.Author, author_id):
         raise HTTPException(status_code=404, detail="Author not found")
     q = select(models.Book).where(models.Book.author_id == author_id).order_by(models.Book.id)
-    total = db.scalar(select(func.count()).select_from(models.Book).where(models.Book.author_id == author_id)) or 0
+    total = db.scalar(
+        select(func.count()).select_from(models.Book).where(models.Book.author_id == author_id)
+    ) or 0
     items = db.execute(q.limit(limit).offset(offset)).scalars().all()
     return {"data": items, "meta": {"limit": limit, "offset": offset, "total": total}}

@@ -1,0 +1,5 @@
+[
+  { "id": "p1", "title": "Sunny Studio", "city": "San Francisco", "pricePerNight": 129, "thumbnail": "https://picsum.photos/seed/p1/300/200", "description": "Bright studio near the bay." },
+  { "id": "p2", "title": "Cozy Loft", "city": "Seattle", "pricePerNight": 99,  "thumbnail": "https://picsum.photos/seed/p2/300/200", "description": "Loft with skyline views." },
+  { "id": "p3", "title": "Desert Retreat", "city": "Phoenix", "pricePerNight": 139, "thumbnail": "https://picsum.photos/seed/p3/300/200", "description": "Calm, warm, and quiet." }
+]

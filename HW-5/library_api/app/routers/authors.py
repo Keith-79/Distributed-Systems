@@ -1,79 +1,67 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import select, func
-from sqlalchemy.exc import IntegrityError
-from fastapi.responses import JSONResponse
-from app.deps import get_db
-from app import models
-from app import schemas
+from ..database import get_db
+from .. import models
+from ..schemas import AuthorCreate, AuthorOut, AuthorUpdate, BookOut
 
-router = APIRouter()
+router = APIRouter(prefix="/authors", tags=["authors"])
 
-@router.post("", response_model=schemas.AuthorOut, status_code=status.HTTP_201_CREATED)
-def create_author(author_in: schemas.AuthorCreate, db: Session = Depends(get_db)):
-    # ✅ Check only for duplicate email
-    existing = db.execute(
-        select(models.Author).where(models.Author.email == author_in.email)
-    ).scalar_one_or_none()
+def _get_author_or_404(db: Session, author_id: int) -> models.Author:
+    author = db.get(models.Author, author_id)
+    if not author:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Author not found")
+    return author
 
+@router.post("", response_model=AuthorOut, status_code=status.HTTP_201_CREATED)
+def create_author(payload: AuthorCreate, db: Session = Depends(get_db)):
+    existing = db.execute(select(models.Author).where(func.lower(models.Author.email) == func.lower(payload.email))).scalar_one_or_none()
     if existing:
-        raise HTTPException(status_code=400, detail="Email already exists")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
+    author = models.Author(first_name=payload.first_name.strip(), last_name=payload.last_name.strip(), email=payload.email.strip())
+    db.add(author); db.commit(); db.refresh(author); return author
 
-    author = models.Author(**author_in.model_dump())
-    db.add(author)
-    db.commit()
-    db.refresh(author)
-    return author
-
-@router.get("", response_model=schemas.AuthorsPage)
+@router.get("", response_model=List[AuthorOut])
 def list_authors(
-    limit: int = Query(10, ge=1, le=100),
-    offset: int = Query(0, ge=0),
     db: Session = Depends(get_db),
+    q: Optional[str] = Query(None, description="optional search in first/last name"),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
 ):
-    total = db.scalar(select(func.count()).select_from(models.Author)) or 0
-    items = db.execute(
-        select(models.Author).order_by(models.Author.id).limit(limit).offset(offset)
-    ).scalars().all()
-    return {"data": items, "meta": {"limit": limit, "offset": offset, "total": total}}
+    stmt = select(models.Author)
+    if q:
+        like = f"%{q.strip()}%"
+        stmt = stmt.where(func.concat(models.Author.first_name, " ", models.Author.last_name).ilike(like))
+    stmt = stmt.order_by(models.Author.last_name.asc(), models.Author.first_name.asc()).limit(limit).offset(offset)
+    return db.execute(stmt).scalars().all()
 
-@router.get("/{author_id}", response_model=schemas.AuthorOut)
+@router.get("/{author_id}", response_model=AuthorOut)
 def get_author(author_id: int, db: Session = Depends(get_db)):
-    author = db.get(models.Author, author_id)
-    if not author:
-        raise HTTPException(status_code=404, detail="Author not found")
-    return author
+    return _get_author_or_404(db, author_id)
 
-@router.put("/{author_id}", response_model=schemas.AuthorOut)
-def update_author(author_id: int, payload: schemas.AuthorUpdate, db: Session = Depends(get_db)):
-    author = db.get(models.Author, author_id)
-    if not author:
-        raise HTTPException(status_code=404, detail="Author not found")
+@router.put("/{author_id}", response_model=AuthorOut)
+def update_author(author_id: int, payload: AuthorUpdate, db: Session = Depends(get_db)):
+    author = _get_author_or_404(db, author_id)
+    if payload.email and payload.email.strip().lower() != author.email.lower():
+        conflict = db.execute(select(models.Author).where(func.lower(models.Author.email) == func.lower(payload.email))).scalar_one_or_none()
+        if conflict:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
+        author.email = payload.email.strip()
+    if payload.first_name is not None: author.first_name = payload.first_name.strip()
+    if payload.last_name  is not None: author.last_name  = payload.last_name.strip()
+    db.add(author); db.commit(); db.refresh(author); return author
 
-    if payload.first_name is not None: author.first_name = payload.first_name
-    if payload.last_name  is not None: author.last_name  = payload.last_name
-    if payload.email      is not None: author.email      = payload.email
-
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(status_code=409, detail="Email already exists")
-    db.refresh(author)
-    return author
-
-@router.delete("/{author_id}", responses={200: {"description": "Author deleted"}})
+@router.delete("/{author_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_author(author_id: int, db: Session = Depends(get_db)):
-    author = db.get(models.Author, author_id)
-    if not author:
-        raise HTTPException(status_code=404, detail="Author not found")
+    author = _get_author_or_404(db, author_id)
+    book_count = db.execute(select(func.count()).select_from(models.Book).where(models.Book.author_id == author.id)).scalar_one()
+    if book_count > 0:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Cannot delete author with existing books")
+    db.delete(author); db.commit(); return None
 
-    has_books = db.scalar(
-        select(func.count()).select_from(models.Book).where(models.Book.author_id == author_id)
-    )
-    if has_books:
-        raise HTTPException(status_code=400, detail="Cannot delete author with existing books")
-
-    db.delete(author)
-    db.commit()
-    return JSONResponse(status_code=200, content={"detail": "Author deleted"})
+@router.get("/{author_id}/books", response_model=List[BookOut])
+def list_books_by_author(author_id: int, db: Session = Depends(get_db)):
+    if not db.get(models.Author, author_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Author not found")
+    return db.execute(select(models.Book).where(models.Book.author_id == author_id)).scalars().all()

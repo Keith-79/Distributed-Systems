@@ -27,7 +27,7 @@ async def _ollama_chat(messages: List[dict]) -> str:
 
 @router.post("/chat", response_model=ChatOut)
 async def chat(body: ChatIn, db: Session = Depends(get_db)):
-    # get or create conversation
+    
     convo = None
     if body.conversation_id:
         convo = db.get(models.Conversation, body.conversation_id)
@@ -40,13 +40,11 @@ async def chat(body: ChatIn, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(convo)
 
-    # save user message
     user_msg = models.Message(conversation_id=convo.id, role="user", content=body.message.strip())
     db.add(user_msg)
     db.commit()
     db.refresh(user_msg)
 
-    # build history
     stmt = (
         select(models.Message)
         .where(models.Message.conversation_id == convo.id)
@@ -55,10 +53,8 @@ async def chat(body: ChatIn, db: Session = Depends(get_db)):
     history = db.execute(stmt).scalars().all()
     chat_history = [{"role": m.role, "content": m.content} for m in history]
 
-    # call ollama
     reply_text = await _ollama_chat(chat_history)
 
-    # save assistant reply
     bot_msg = models.Message(conversation_id=convo.id, role="assistant", content=reply_text)
     db.add(bot_msg)
     db.commit()
@@ -84,5 +80,4 @@ def list_messages(conversation_id: int, db: Session = Depends(get_db)):
         .order_by(models.Message.created_at.asc())
     )
     msgs = db.execute(stmt).scalars().all()
-    # pydantic will convert via from_attributes
     return MessagesOut(conversation_id=conversation_id, messages=msgs)

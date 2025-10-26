@@ -1,9 +1,11 @@
 from typing import Generator
-from app.db import SessionLocal
+from .db import SessionLocal
+from sqlalchemy.orm import Session
 
-def get_db() -> Generator:
-    db = SessionLocal()
+def get_db():
+    db: Session = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
