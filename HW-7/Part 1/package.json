@@ -1,0 +1,38 @@
+{
+  "name": "hw-7",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+
+  "scripts": {
+    "test": "mocha --timeout 10000 \"test/**/*.test.js\"",
+    "coverage": "nyc npm test && nyc report --reporter=text-summary"
+  },
+
+  "devDependencies": {
+    "nyc": "^15.1.0"
+  },
+
+  
+
+
+
+
+
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.2"
+  },
+  "devDependencies": {
+    "chai": "^6.2.0",
+    "mocha": "^11.7.4",
+    "mongodb-memory-server": "^10.2.3",
+    "supertest": "^7.1.4"
+  }
+}
