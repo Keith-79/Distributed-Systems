@@ -1,0 +1,13 @@
+{
+  "name": "hw8-kafka-user-service",
+  "version": "1.0.0",
+  "main": "consumer.js",
+  "scripts": {
+    "setup:topics": "node setup-topics.js",
+    "start:consumer": "node consumer.js",
+    "demo": "node homework-demo.js"
+  },
+  "dependencies": {
+    "kafka-node": "^5.0.0"
+  }
+}
