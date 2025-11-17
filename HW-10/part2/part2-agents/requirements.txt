@@ -1,0 +1,5 @@
+kafka-python-ng
+python-dotenv==1.0.1
+langchain==0.3.7
+langchain-ollama==0.2.0
+six==1.16.0
